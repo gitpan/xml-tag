@@ -4,10 +4,9 @@ META.yml
 Makefile.PL
 README
 dist.ini
-eg/example.pl
 lib/XML/Tag.pm
-lib/XML/Tag/Tutorial.pod
 lib/XML/Tag/html5.pm
-lib/XML/Tag/html5_bootstrap.pm
 readme.textile
-t/00_test.t
+t/00_import.t
+t/01_ns.t
+t/03_attr_overload.t

@@ -5,7 +5,7 @@ use Exporter 'import';
 our @EXPORT = qw<
     pre p div span hr
     script
-    html head body title import_css import_js meta http_equiv meta_name
+    html head body title import_css import_js meta http_equiv meta_name meta_content
     h1 h2 h3 h4 h5 h6
     table cell row th table_heads table_rows
     tspan rowspan colspan
@@ -19,10 +19,12 @@ our @EXPORT = qw<
     dl dt dd dl_hash
     link_to link_rel
     img
-    section footer header aside
+    section footer header aside nav article
 
 >;
 
+sub article (&) { tag nav     => @_ }
+sub nav     (&) { tag nav     => @_ }
 sub header  (&) { tag header  => @_ }
 sub footer  (&) { tag footer  => @_ }
 sub aside   (&) { tag aside   => @_ }
@@ -55,15 +57,25 @@ sub span    (&) { tag span    => @_ }
 sub script  (&) { tag script  => @_ }
 sub pre     (&) { tag pre     => @_ }
 sub http_equiv    { qq!<meta http-equiv="$_[0]" content="$_[1]"/>! }
-sub meta_name     { qq!<meta name="$_[0]" content="$_[1]"/>! }
+
+# TODO: deprecate
+# TODO: add an error from caller
+
+sub meta_name     {
+    say STDERR 'deprecated meta_name, use meta_content instead';
+    qq!<meta name="$_[0]" content="$_[1]"/>!
+}
+
+sub meta_content  { qq!<meta name="$_[0]" content="$_[1]"/>! }
+
 sub meta_keywords { qq!<meta name="keywords" content="$_[0]"/>! }
 sub meta_author   { qq!<meta name="author"  content="$_[0]"/>! }
 sub link_to     {
     my ( $link, @data ) = @_;
     tag a =>  sub { @data }, +{ href => $link }
 }
-sub import_css { qq{<link rel="stylesheet" href="$_[0]" />} }
-sub import_js  { qq{<script src="$_[0]"></script>} }
+sub import_css (_) { my $link = shift; qq{<link rel="stylesheet" href="$link" />} }
+sub import_js  (_) { my $link = shift; qq{<script src="$link"></script>} }
 
 sub submit { tag input => 0, +{ qw< type submit name   >, @_ } }
 sub link_rel { tag link => 0, +{ rel=> @_ } }
