@@ -1,16 +1,19 @@
 #! /usr/bin/perl
 package XML::Tag;
 use Modern::Perl;
+use Perlude;
 # use Exporter 'import';
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 sub import {
     shift;
     my ( $caller ) = caller;
     no strict 'refs';
-
-    die if @_;
-    for (qw< tag ns >) { *{"$caller\::$_"} = \&{$_} }
+    my @tags = do {
+        if (@_) {@_}
+        else { qw< tag ns tagify_keys > }
+   };
+   for (@tags) { *{"$caller\::$_"} = \&{$_} }
 }
 
 # ABSTRACT: tag
@@ -63,6 +66,8 @@ sub ns {
     $pkg ||= caller;
     $ns and $ns.=':'; # add namespace separator
 
+    $_//='' for $ns, $pkg;
+
     for my $spec ( @_ ) {
         my ( $sub, $tag ) = do {
             if ( ref $spec ) { @$spec }
@@ -73,23 +78,50 @@ sub ns {
     }
 }
 
+sub tagify_keys (_);
+sub tagify_keys (_) {
+    my $entry = shift;
+    my @render;
+    while ( my ($tag,$v) = each %$entry ) {
+        push @render
+        , "<$tag>"
+        , ( ref $v ? tagify_keys $v : $v )
+        , "</$tag>"
+    };
+    join '', @render;
+}
+
 1;
 
 =head1 XML::Tag, a simple XML builder
 
-Builders are a set of helpers to generate the tag content. I see 3 major gains using this strategy over templating systems:
+Builders are a set of helpers to generate the tag content. I see 3 major gains
+using this strategy over templating systems:
 
 =over 2
 
-=item keep the power of perl in your hands (don't abuse it and respect at least an MVC separation)
+=item *
 
-=item don't be WYSIWYG. When i write code, i need indentations and line feeds to make things readable. All those extra stuff must disapear in the final result because they are useless and anoying when you manage to control spaces with CSS.
+keep the power of perl in your hands (don't abuse it and respect at least
+an MVC separation)
 
-=item stay confident about the quality of generated code: as long as they compiles, the helpers render bug free xml (WARNING: the quality of all PCDATA, attribute values and schemas is *your* job)
+=item *
+
+don't be WYSIWYG. When i write code, i need indentations and line feeds
+to make things readable. All those extra stuff must disapear in the final
+result because they are useless and anoying when you manage to control spaces
+with CSS.
+
+=item * 
+
+stay confident about the quality of generated code: as long as they
+compiles, the helpers render bug free xml (WARNING: the quality of all PCDATA,
+attribute values and schemas is *your* job)
 
 =back
 
-L<see how builders works|http://docs.codehaus.org/display/GROOVY/How+Builders+Work> or see it in action:
+L<see how builders works|http://docs.codehaus.org/display/GROOVY/How+Builders+Work>
+or see it in action:
 
 To render this text on C<STDIN>.
 
@@ -144,20 +176,24 @@ the parameters of tag are
 
 =over 2
 
-=item $name
+=item *
 
-the name of the tag
+$name: the name of the tag
 
-=item $content
+=item * 
+
+$content: 
 
 a sub returning th
 
     * content sub
     * a hashref with the list of default attributes for the tag 
 
-=item $name
+=item *
 
-=over
+$name ??? 
+
+=back
 
     perl -MXML::Tag -E '
         print "($_)" for tag title => sub { "content" },  +{qw(class test)};
@@ -177,9 +213,8 @@ a sub returning th
     print for tag title => sub { "content" },  +{qw(class test)};
 
     use XML::Tag;
-tag title => sub { "content" },  +{qw(class test)}
-tag title => sub { +{qw(class test)}, "content" }
-
+    tag title => sub { "content" },  +{qw(class test)}
+    tag title => sub { +{qw(class test)}, "content" }
 
 
 the content sub returns a list, the first elements of the lists are 

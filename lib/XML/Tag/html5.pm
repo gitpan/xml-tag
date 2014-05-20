@@ -3,11 +3,12 @@ package XML::Tag::html5;
 use XML::Tag;
 use Exporter 'import';
 our @EXPORT = qw<
-    pre p div span hr
+    pre p div span hr 
+    style
     script
     html head body title import_css import_js meta http_equiv meta_name meta_content
     h1 h2 h3 h4 h5 h6
-    table cell row th table_heads table_rows
+    table cell row th table_heads table_rows caption
     tspan rowspan colspan
     form label
     input input_form input_text input_pwd
@@ -19,43 +20,53 @@ our @EXPORT = qw<
     dl dt dd dl_hash
     link_to link_rel
     img
-    section footer header aside nav article
-
+    section footer header aside nav article 
+    code
+    quote blockquote
+    textarea
+    fieldset
 >;
 
-sub article (&) { tag nav     => @_ }
-sub nav     (&) { tag nav     => @_ }
-sub header  (&) { tag header  => @_ }
-sub footer  (&) { tag footer  => @_ }
-sub aside   (&) { tag aside   => @_ }
-sub section (&) { tag section => @_ }
-sub label   (&) { tag label   => @_ }
-sub form    (&) { tag form    => @_ }
-sub input   (&) { tag input   => @_ }
-sub p       (&) { tag p       => @_ }
-sub ul      (&) { tag ul      => @_ }
-sub ol      (&) { tag ol      => @_ }
-sub li      (&) { tag li      => @_ }
-sub a       (&) { tag a       => @_ }
-sub h1      (&) { tag h1      => @_ }
-sub h2      (&) { tag h2      => @_ }
-sub h3      (&) { tag h3      => @_ }
-sub h4      (&) { tag h4      => @_ }
-sub h5      (&) { tag h5      => @_ }
-sub h6      (&) { tag h6      => @_ }
-sub hr      (&) { tag hr      => @_ }
-sub title   (&) { tag title   => @_ }
-sub html    (&) { tag html    => @_ }
-sub head    (&) { tag head    => @_ }
-sub body    (&) { tag body    => @_ }
-sub table   (&) { tag table   => @_ }
-sub th      (&) { tag th      => @_ }
-sub cell    (&) { tag td      => @_ }
-sub row     (&) { tag tr      => @_ }
-sub div     (&) { tag div     => @_ }
-sub span    (&) { tag span    => @_ }
-sub script  (&) { tag script  => @_ }
-sub pre     (&) { tag pre     => @_ }
+sub fieldset    (&) { tag fieldset   => @_ }
+sub style          { "<style>", @_, "</style>" }
+sub caption    (&) { tag caption   => @_ }
+sub textarea   (&) { tag textarea   => @_ }
+sub blockquote (&) { tag blockquote => @_ }
+sub quote      (&) { tag q       => @_ }
+sub article    (&) { tag nav     => @_ }
+sub code       (&) { tag code    => @_ }
+sub nav        (&) { tag nav     => @_ }
+sub header     (&) { tag header  => @_ }
+sub footer     (&) { tag footer  => @_ }
+sub aside      (&) { tag aside   => @_ }
+sub section    (&) { tag section => @_ }
+sub label      (&) { tag label   => @_ }
+sub form       (&) { tag form    => @_ }
+sub input      (&) { tag input   => @_ }
+sub p          (&) { tag p       => @_ }
+sub ul         (&) { tag ul      => @_ }
+sub ol         (&) { tag ol      => @_ }
+sub li         (&) { tag li      => @_ }
+sub a          (&) { tag a       => @_ }
+sub h1         (&) { tag h1      => @_ }
+sub h2         (&) { tag h2      => @_ }
+sub h3         (&) { tag h3      => @_ }
+sub h4         (&) { tag h4      => @_ }
+sub h5         (&) { tag h5      => @_ }
+sub h6         (&) { tag h6      => @_ }
+sub hr         (&) { tag hr      => @_ }
+sub title      (&) { tag title   => @_ }
+sub html       (&) { tag html    => @_ }
+sub head       (&) { tag head    => @_ }
+sub body       (&) { tag body    => @_ }
+sub table      (&) { tag table   => @_ }
+sub th         (&) { tag th      => @_ }
+sub cell       (&) { tag td      => @_ }
+sub row        (&) { tag tr      => @_ }
+sub div        (&) { tag div     => @_ }
+sub span       (&) { tag span    => @_ }
+sub script     (&) { tag script  => @_ }
+sub pre        (&) { tag pre     => @_ }
 sub http_equiv    { qq!<meta http-equiv="$_[0]" content="$_[1]"/>! }
 
 # TODO: deprecate
@@ -84,7 +95,8 @@ sub img      { tag img => 0, +{ src=> @_ } }
 sub input_form (&) { tag form => $_[0], +{ qw< method post > } }
 sub input_tag {
     my %form;
-    @form{qw< type name value >} = splice @_,0,3;
+    @form{qw< type name >} = splice @_,0,2;
+    @_ and $form{value} = shift;
     tag input => 0, +{ %form, @_ }
 }
 sub input_pwd     { input_tag password => @_ }

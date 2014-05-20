@@ -22,6 +22,14 @@ for
     is ( $got, $expected, $desc );
 }
 
+{ my $warn;
+    local $SIG{__WARN__} = sub { $warn = shift };
+    ns [], qw< ZER EZR ZEE >;
+    ok
+    ( (not $warn), "empty spec means 'no NS'" );
+}
+
+
 done_testing;
 
 # TODO: how to test bar?
