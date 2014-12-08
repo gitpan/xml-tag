@@ -90,10 +90,4 @@ svg
     ns '' => @EXPORT;
 };
 
-sub svg (&) {
-}
-
-
-
-
 1;

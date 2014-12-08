@@ -12,7 +12,6 @@ BEGIN {
         category
         content
         entry
-        feed
         icon
         id
         link

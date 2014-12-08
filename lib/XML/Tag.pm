@@ -1,9 +1,10 @@
 #! /usr/bin/perl
 package XML::Tag;
-use Modern::Perl;
-use Perlude;
-# use Exporter 'import';
-our $VERSION = '0.3';
+use strict;
+use warnings;
+our $VERSION = '0.4';
+
+# ABSTRACT: lib to build builders for xml content
 
 sub import {
     shift;
@@ -11,18 +12,15 @@ sub import {
     no strict 'refs';
     my @tags = do {
         if (@_) {@_}
-        else { qw< tag ns tagify_keys > }
+        else { qw< tag ns as_xml > }
    };
    for (@tags) { *{"$caller\::$_"} = \&{$_} }
 }
-
-# ABSTRACT: tag
 
 sub tag {
     my ( $tag, $code, $attrs ) = @_;
     my %attr = $attrs ? %$attrs : ();
     my @data = $code ? $code->() : ();
-
 
     # TODO: what if blessed ? 
     while (my $ref = ref $data[0] ) {
@@ -78,14 +76,14 @@ sub ns {
     }
 }
 
-sub tagify_keys (_);
-sub tagify_keys (_) {
+sub as_xml (_);
+sub as_xml (_) {
     my $entry = shift;
     my @render;
     while ( my ($tag,$v) = each %$entry ) {
         push @render
         , "<$tag>"
-        , ( ref $v ? tagify_keys $v : $v )
+        , ( ref $v ? as_xml $v : $v )
         , "</$tag>"
     };
     join '', @render;

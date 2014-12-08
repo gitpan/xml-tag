@@ -4,7 +4,7 @@ use YAML;
 use Test::More;
 use XML::Tag;
 
-$_ = tagify_keys
+$_ = as_xml
     { author => {qw< name mc email mc@nowhere >} };
 
 ok $_, "tagified author";

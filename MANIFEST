@@ -4,6 +4,7 @@ MANIFEST
 META.yml
 Makefile.PL
 README
+bin/p5x
 dist.ini
 lib/XML/Tag.pm
 lib/XML/Tag/Atom.pm
@@ -14,5 +15,5 @@ lib/XML/Tag/html5.pm
 readme.textile
 t/00_import.t
 t/01_ns.t
-t/02_tagify_keys.t
+t/02_as_xml.t
 t/03_attr_overload.t

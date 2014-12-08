@@ -10,27 +10,29 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "tag",
+  "ABSTRACT" => "lib to build builders for xml content",
   "AUTHOR" => "Marc Chantreux <khatar\@phear.org>",
   "BUILD_REQUIRES" => {},
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
   },
   "DISTNAME" => "xml-tag",
-  "EXE_FILES" => [],
+  "EXE_FILES" => [
+    "bin/p5x"
+  ],
   "LICENSE" => "perl",
   "NAME" => "xml::tag",
   "PREREQ_PM" => {
     "Exporter" => 0,
     "Modern::Perl" => 0,
-    "Perlude" => 0,
-    "strict" => 0
+    "strict" => 0,
+    "warnings" => 0
   },
   "TEST_REQUIRES" => {
     "Test::More" => 0,
     "YAML" => 0
   },
-  "VERSION" => "0.3",
+  "VERSION" => "0.4",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -40,10 +42,10 @@ my %WriteMakefileArgs = (
 my %FallbackPrereqs = (
   "Exporter" => 0,
   "Modern::Perl" => 0,
-  "Perlude" => 0,
   "Test::More" => 0,
   "YAML" => 0,
-  "strict" => 0
+  "strict" => 0,
+  "warnings" => 0
 );
 
 

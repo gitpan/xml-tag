@@ -123,12 +123,12 @@ sub input_select {
             option {
                 if (ref) {
                     +{ name => $$_[0]
-                    ,   ( $$_[1] ~~ $default
+                    ,   ( $$_[1] =~ $default
                         ? @selected
                         : () )
                     }
                     , $$_[1]
-                } else { +{ $_ ~~ $default ? @selected : () } , $_ }
+                } else { +{ $_ =~ $default ? @selected : () } , $_ }
             }
         } @$options
     }
